@@ -134,8 +134,8 @@ int main(int argc, char* argv[])
             printf("send_time = %dus, rece_time = %dus, sum_time = %dus\n", send_interval, rece_interval, send_interval + rece_interval);
             printf("========================\n");
         }
-        interval_all = timeUs() - before_all / 1000;
-        printf("interval_all = %\nms", interval_all);
+        interval_all = timeUs() - before_all;
+        printf("interval_all = %d\nus", interval_all);
     }
 
     std::cout << "Server finished sending/receiving.\n";
