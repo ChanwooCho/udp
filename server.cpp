@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
             interval = timeUs() - before;
-            printf("time = %d\nus", interval);
+            printf("iteration %d decoder %d: send = %d, receive = %d, interval = %dus\n", e, i, bytes_sent, bytes_recv, interval);
             // (Optional) Do something with the received data...
         }
     }
