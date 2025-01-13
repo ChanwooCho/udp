@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 
     // Main loop: 50 iterations of e, and (# of decoders * 2) iterations of i
     for (int e = 0; e < 50; ++e) {
-        before_all = 0;
+        before_all = timeUs();
         for (int i = 0; i < num_decoders * 2; ++i) {
             // 1) Fill buffer
             std::memset(buffer, 'A' + (i % 26), data_size);
