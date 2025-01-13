@@ -4,6 +4,13 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/time.h>
+
+unsigned long timeUs() {
+    struct timeval te; 
+    gettimeofday(&te, NULL);
+    return te.tv_sec * 1000000LL + te.tv_usec;
+}
 
 int main(int argc, char* argv[])
 {
@@ -71,15 +78,23 @@ int main(int argc, char* argv[])
     }
 
     std::cout << "Received initial message from client. Starting main loop.\n";
+    unsigned int before;
+    unsigned int send_interval;
+    unsigned int rece_interval;
+
+    unsigned int before_all;
+    unsigned int interval_all;
 
     // Main loop: 50 iterations of e, and (# of decoders * 2) iterations of i
     for (int e = 0; e < 50; ++e) {
+        before_all = 0;
         for (int i = 0; i < num_decoders * 2; ++i) {
             // 1) Fill buffer
             std::memset(buffer, 'A' + (i % 26), data_size);
 
             // 2) Send data to the client
             //    We use sendto() with the client_addr we learned
+            before = timeUs();
             ssize_t bytes_sent = sendto(
                 sockfd,
                 buffer,
@@ -88,6 +103,8 @@ int main(int argc, char* argv[])
                 (struct sockaddr*)&client_addr,
                 client_addr_len
             );
+            send_interval = timeUs() - before;
+            
             if (bytes_sent < 0) {
                 perror("sendto");
                 // Depending on needs, might break or continue
@@ -96,6 +113,7 @@ int main(int argc, char* argv[])
 
             // 3) Receive data back from the client
             std::memset(buffer, 0, data_size);
+            before = timeUs();
             ssize_t bytes_recv = recvfrom(
                 sockfd,
                 buffer,
@@ -104,14 +122,20 @@ int main(int argc, char* argv[])
                 (struct sockaddr*)&client_addr,
                 &client_addr_len
             );
+            rece_interval = timeUs() - before;
+            
             if (bytes_recv < 0) {
                 perror("recvfrom");
                 // Depending on needs, might break or continue
                 break;
             }
-
-            // [Optional] You can process or validate the received data here
+            printf("iteration %d decoder %d\n", e, i);
+            printf("send_bytes = %d, rece_bytes = %d\n", bytes_sent, bytes_recv);
+            printf("send_time = %dus, rece_time = %dus, sum_time = %dus\n", send_interval, rece_interval, send_interval + rece_interval);
+            printf("========================\n");
         }
+        interval_all = timeUs() - before_all / 1000;
+        printf("interval_all = %\nms", interval_all);
     }
 
     std::cout << "Server finished sending/receiving.\n";
