@@ -170,18 +170,24 @@ int main(int argc, char *argv[]) {
             // 1) Receive data_size bytes *from* the server
             //    (In some protocols, the server might send first, or we might
             //     send first. This is just matching your TCP logic.)
-            ssize_t bytes_received = read_all(sock, buffer, data_size, e, i, serverAddr);
+            ssize_t bytes_received = recvfrom(sock,
+                                      buffer + total_read,
+                                      size - total_read,
+                                      0,
+                                      reinterpret_cast<struct sockaddr*>(&serverAddr),
+                                      &addrLen);
             if (bytes_received < 0) {
                 std::cerr << "Error receiving from server." << std::endl;
                 break;
             }
 
             // 2) Send data_size bytes *back* to the server
-            ssize_t bytes_sent = send_all(sock, buffer, data_size, e, i, serverAddr);
-            if (bytes_sent < 0) {
-                std::cerr << "Error sending to server." << std::endl;
-                break;
-            }
+            ssize_t bytes_sent = sendto(sock,
+                                    data + total_sent,
+                                    size - total_sent,
+                                    0,
+                                    reinterpret_cast<const struct sockaddr*>(&serverAddr),
+                                    sizeof(serverAddr));
 
             unsigned long interval1 = timeUs() - before1;
             std::cout << "iteration " << e
