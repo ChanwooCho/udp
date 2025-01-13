@@ -5,6 +5,13 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/time.h>
+
+unsigned long timeUs() {
+    struct timeval te; 
+    gettimeofday(&te, NULL);
+    return te.tv_sec * 1000000LL + te.tv_usec;
+}
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
@@ -77,11 +84,13 @@ int main(int argc, char* argv[]) {
     //       1) fill buffer
     //       2) send data
     //       3) read data back
+    unsigned int before;
+    unsigned int interval;
     for (int e = 0; e < 50; ++e) {
         for (int i = 0; i < num_decoders * 2; ++i) {
             // Fill buffer with repeated character
             std::memset(buffer, 'A' + (i % 26), data_size);
-
+            before = timeUs();
             // Send the data (UDP)
             ssize_t bytes_sent = send(sockfd, buffer, data_size, 0);
             if (bytes_sent < 0) {
@@ -97,7 +106,8 @@ int main(int argc, char* argv[]) {
                 // You may choose to continue or break, depending on your needs
                 break;
             }
-
+            interval = timeUs() - before;
+            printf("time = %d\nus", interval);
             // (Optional) Do something with the received data...
         }
     }
