@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
             // (Optional) Do something with the received data...
         }
         interval_all = timeUs() - before_all;
-        printf("interval_all = %d\n, interval_all);
+        printf("interval_all = %\n", interval_all);
     }
 
     std::cout << "Server finished sending/receiving.\n";
