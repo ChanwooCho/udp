@@ -85,14 +85,22 @@ int main(int argc, char* argv[]) {
     //       2) send data
     //       3) read data back
     unsigned int before;
-    unsigned int interval;
+    unsigned int send_interval;
+    unsigned int rece_interval;
+
+    unsigned int before_all;
+    unsigned int interval_all;
+    
     for (int e = 0; e < 50; ++e) {
+        before_all = 0;
         for (int i = 0; i < num_decoders * 2; ++i) {
             // Fill buffer with repeated character
             std::memset(buffer, 'A' + (i % 26), data_size);
-            before = timeUs();
+
             // Send the data (UDP)
+            before = timeUs();
             ssize_t bytes_sent = send(sockfd, buffer, data_size, 0);
+            send_interval = timeUs() - before;
             if (bytes_sent < 0) {
                 perror("send");
                 // You may choose to continue or break, depending on your needs
@@ -100,16 +108,23 @@ int main(int argc, char* argv[]) {
             }
 
             // Receive data back (UDP)
+            before = timeUs();
             ssize_t bytes_recv = recv(sockfd, buffer, data_size, 0);
+            rece_interval = timeUs() - before;
+            
             if (bytes_recv < 0) {
                 perror("recv");
                 // You may choose to continue or break, depending on your needs
                 break;
             }
-            interval = timeUs() - before;
-            printf("iteration %d decoder %d: send = %d, receive = %d, interval = %dus\n", e, i, bytes_sent, bytes_recv, interval);
+            printf("iteration %d decoder %d\n", e, i);
+            printf("send_bytes = %d, rece_bytes = %d\n", bytes_sent, bytes_recv);
+            printf("send_time = %dus, rece_time = %dus, sum_time = %dus\n", send_interval, rece_interval, send_interval + rece_interval);
+            printf("========================\n");
             // (Optional) Do something with the received data...
         }
+        interval_all = timeUs() - before_all;
+        printf("interval_all = %d\n, interval_all);
     }
 
     std::cout << "Server finished sending/receiving.\n";
