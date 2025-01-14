@@ -129,8 +129,8 @@ int main(int argc, char* argv[])
                 // Depending on needs, might break or continue
                 break;
             }
-            printf("iteration %d decoder %d\n", e, i);
-            printf("send_bytes = %d, rece_bytes = %d\n", bytes_sent, bytes_recv);
+            printf("iteration %d decoder %d, current_data = %c\n", e, i, buffer[data_size - 1]);
+            printf("send_bytes = %zd, rece_bytes = %zd\n", bytes_sent, bytes_recv);
             printf("send_time = %dus, rece_time = %dus, sum_time = %dus\n", send_interval, rece_interval, send_interval + rece_interval);
             printf("========================\n");
         }
