@@ -114,6 +114,7 @@ int main(int argc, char* argv[])
             // 3) Receive data back from the client
             std::memset(buffer, 0, data_size);
             before = timeUs();
+            printf("iteration %d decoder %d, before_data = %c\n", e, i, buffer[data_size - 1]);
             ssize_t bytes_recv = recvfrom(
                 sockfd,
                 buffer,
