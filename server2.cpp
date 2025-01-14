@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
             printf("========================\n");
         }
         interval_all = timeUs() - before_all;
-        printf("interval_all = %d\nus", interval_all);
+        printf("interval_all = %dus\n", interval_all);
     }
 
     std::cout << "Server finished sending/receiving.\n";
